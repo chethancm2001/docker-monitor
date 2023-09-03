@@ -1,31 +1,48 @@
 import { useEffect , useState } from "react";
 import axios from "axios";
 import config from "./contant"
+import Error from "./Error";
 
 function Info(){
   let [data,setData] = useState({})
+
   async function fetchdata(){
+    try{
     let result = await axios.get(config.baseurl+"version")
     console.log(result.data)
     setData(result.data)
+    }
+
+    catch(error){
+      console.log(error)
+    }
     
   }
   
   useEffect(()=>{fetchdata()},[])
 
+  function printdata(key){
+    
+    if (typeof data[key] == "string"){
+      return (
+        <tr>
+        <td><p>{key}</p></td>
+         <td><p>{data[key]}</p></td>
+        </tr>
+      )
+    }
+
+  }
+
     return(
-        <div className="info">
-        <h1>Docker info</h1>
-        <div className="info-div">
-        <p>Version: {data.Version}</p>
-        <p>API Version: {data.ApiVersion}</p>
-        <p>Min API Version: {data.MinAPIVersion}</p>
-        <p>Go Version: {data.GoVersion}</p>
-        <p>Operating System: {data.Os}</p>
-        <p>Architecture: {data.Arch}</p>
-        <p>Kernel Version: {data.KernelVersion}</p>
-        </div>
-        </div>
+          <>
+          <h1>Info</h1>
+          <table>
+          {Object.keys(data).map((key) => (
+            <>{printdata(key)}</>
+        ))}
+        </table>
+          </>
     )
 
 }
